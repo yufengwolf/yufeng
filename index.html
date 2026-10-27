@@ -1,35 +1,70 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f5ee">
-  <meta name="description" content="Yufeng 的个人站点与工具导航。工具、作品、生活与小型产品入口集合。">
-  <title>Yufeng · Personal Tool Index</title>
+  <meta name="theme-color" content="#0a0b0f">
+  <meta name="description" content="御风的个人作品集 —— 工具、作品与个人项目的集中展示。静态部署，方便扩展。">
+  <title>御风 · Yufeng — 个人作品集</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     :root {
+      color-scheme: dark;
+
+      --bg: #0a0b0f;
+      --bg-2: #0e1016;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-2: rgba(255, 255, 255, 0.06);
+      --surface-hover: rgba(255, 255, 255, 0.09);
+      --border: rgba(255, 255, 255, 0.09);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #ECECF1;
+      --text-soft: #A8ADB8;
+      --muted: #6E747F;
+      --grad: linear-gradient(120deg, #a78bfa 0%, #67e8f9 100%);
+      --grad-soft: linear-gradient(120deg, rgba(167,139,250,0.16), rgba(103,232,249,0.16));
+      --accent: #a78bfa;
+      --accent-2: #67e8f9;
+      --online: #4ade80;
+      --pending: #fbbf24;
+      --glow-1: rgba(167, 139, 250, 0.20);
+      --glow-2: rgba(103, 232, 249, 0.14);
+      --shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
+
+      --radius: 18px;
+      --radius-sm: 12px;
+      --shell: min(1440px, 90%);
+
+      --font-display: "Sora", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
+      --font-body: "Inter", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
       color-scheme: light;
-      --paper: #f7f5ee;
-      --paper-strong: #f1efe7;
-      --card: rgba(255,255,255,0.64);
-      --line: #e3dfd2;
-      --ink: #1f261f;
-      --ink-soft: #4b564d;
-      --muted: #7b8479;
-      --green: #214e3d;
-      --green-soft: #dde9df;
-      --sage: #cfe5c0;
-      --amber: #e9c88e;
-      --gold: #d5bf85;
-      --orange: #de8d68;
-      --shadow: 0 18px 40px rgba(33, 36, 28, 0.08);
-      --radius: 22px;
-      font-family: "SF Pro Display", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
-      line-height: 1.5;
-      font-synthesis: none;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      --bg: #f6f7fb;
+      --bg-2: #eef0f6;
+      --surface: rgba(255, 255, 255, 0.7);
+      --surface-2: rgba(255, 255, 255, 0.85);
+      --surface-hover: rgba(255, 255, 255, 0.96);
+      --border: rgba(15, 18, 30, 0.08);
+      --border-strong: rgba(15, 18, 30, 0.16);
+      --text: #14161d;
+      --text-soft: #464b57;
+      --muted: #80868f;
+      --grad: linear-gradient(120deg, #7c5cff 0%, #0ea5b7 100%);
+      --grad-soft: linear-gradient(120deg, rgba(124,92,255,0.12), rgba(14,165,183,0.12));
+      --accent: #7c5cff;
+      --accent-2: #0ea5b7;
+      --online: #16a34a;
+      --pending: #d97706;
+      --glow-1: rgba(124, 92, 255, 0.16);
+      --glow-2: rgba(14, 165, 183, 0.12);
+      --shadow: 0 22px 54px rgba(20, 25, 50, 0.10);
     }
 
     * { box-sizing: border-box; }
@@ -37,934 +72,426 @@
     body {
       margin: 0;
       min-width: 320px;
-      background:
-        radial-gradient(circle at top, rgba(211, 230, 197, 0.7), transparent 30%),
-        linear-gradient(180deg, #f7f5ee 0%, #f8f6f1 100%);
-      color: var(--ink);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
-
     a { color: inherit; text-decoration: none; }
     button, input { font: inherit; }
-    button { color: inherit; }
+    button { cursor: pointer; color: inherit; }
 
-    .shell {
-      width: min(1180px, calc(100% - 48px));
-      margin: 0 auto;
+    /* 背景极光 + 颗粒 */
+    .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .aurora::before, .aurora::after {
+      content: ""; position: absolute; width: 55vw; height: 55vw; border-radius: 50%;
+      filter: blur(90px); opacity: 0.85;
+    }
+    .aurora::before { top: -16vw; left: -8vw; background: radial-gradient(circle, var(--glow-1), transparent 65%); animation: drift1 20s ease-in-out infinite alternate; }
+    .aurora::after  { bottom: -20vw; right: -10vw; background: radial-gradient(circle, var(--glow-2), transparent 65%); animation: drift2 24s ease-in-out infinite alternate; }
+    @keyframes drift1 { to { transform: translate(7vw, 5vw) scale(1.12); } }
+    @keyframes drift2 { to { transform: translate(-5vw, -4vw) scale(1.08); } }
+    .grain {
+      position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
+    .progress { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: var(--grad); z-index: 40; transition: width 0.1s linear; }
+
+    .shell { width: var(--shell); margin: 0 auto; position: relative; z-index: 1; }
+
+    /* 顶栏 */
     .topbar {
-      height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(31,38,31,0.08);
-      position: sticky;
-      top: 0;
-      backdrop-filter: blur(10px);
-      background: rgba(247,245,238,0.8);
-      z-index: 20;
+      position: sticky; top: 0; z-index: 30; height: 70px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--bg) 70%, transparent);
     }
-
-    .wordmark {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      font-size: 0.8rem;
-    }
-
+    .wordmark { display: inline-flex; align-items: center; gap: 11px; font-family: var(--font-display); font-weight: 800; letter-spacing: 0.12em; font-size: 0.8rem; }
     .mark {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px 10px 10px 4px;
-      background: linear-gradient(135deg, var(--green), #41715f);
-      color: #edf8e6;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 8px 24px rgba(33,78,61,0.22);
-      font-size: 0.9rem;
-      font-weight: 900;
+      width: 30px; height: 30px; border-radius: 9px 9px 9px 3px;
+      background: var(--grad); color: #0a0b0f; display: grid; place-items: center;
+      font-weight: 900; font-size: 0.95rem; box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 40%, transparent);
     }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      color: var(--ink-soft);
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .nav { display: flex; align-items: center; gap: 24px; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--text-soft); font-size: 0.82rem; letter-spacing: 0.03em; transition: color 0.2s ease; }
+    .nav-links a:hover { color: var(--text); }
+    .theme-toggle {
+      width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text-soft); transition: all 0.2s ease;
     }
+    .theme-toggle:hover { color: var(--text); border-color: var(--border-strong); transform: translateY(-1px); }
+    .theme-toggle svg { width: 17px; height: 17px; }
+    [data-theme="dark"] .theme-toggle .moon { display: none; }
+    [data-theme="light"] .theme-toggle .sun { display: none; }
 
-    .nav a {
-      opacity: 0.82;
-      transition: opacity 0.2s ease, color 0.2s ease;
-    }
-
-    .nav a:hover,
-    .nav a:focus-visible {
-      opacity: 1;
-      color: var(--green);
-    }
-
+    /* Hero —— 克制，不抢戏 */
     .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.8fr);
-      gap: 28px;
-      align-items: center;
-      padding: 64px 0 30px;
+      display: grid; grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 40px; align-items: end; padding: 72px 0 44px;
     }
-
     .eyebrow {
-      margin: 0 0 18px;
-      color: var(--green);
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-weight: 700;
+      margin: 0 0 16px; display: inline-flex; align-items: center; gap: 10px;
+      color: var(--text-soft); font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
     }
-
+    .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--accent); }
     h1 {
-      margin: 0;
-      font-size: clamp(2.8rem, 5vw, 5rem);
-      line-height: 0.96;
-      letter-spacing: -0.06em;
-      font-weight: 900;
+      margin: 0; font-family: var(--font-display);
+      font-size: clamp(2.1rem, 4.4vw, 3.2rem); line-height: 1.12;
+      letter-spacing: -0.02em; font-weight: 800;
     }
+    h1 .accent { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { max-width: 520px; margin: 18px 0 0; color: var(--text-soft); font-size: 1rem; line-height: 1.8; }
+    .hero-aside { padding: 14px 0 4px 18px; border-left: 1px solid var(--border-strong); }
+    .aside-label { margin: 0 0 7px; color: var(--muted); font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; }
+    .aside-value { margin: 0; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; line-height: 1.4; }
+    .aside-sub { margin: 6px 0 0; color: var(--muted); font-size: 0.78rem; }
 
-    h1 span {
-      display: block;
-      color: var(--green);
-    }
+    /* 区块 */
+    .section { padding: 40px 0; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 8px 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 22px; }
+    .section-head h2 { margin: 0; font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.02em; font-weight: 700; }
+    .section-head .sub { color: var(--muted); font-size: 0.78rem; }
+    .count { color: var(--muted); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; }
 
-    .lead {
-      max-width: 610px;
-      margin: 24px 0 0;
-      color: var(--ink-soft);
-      font-size: 1.05rem;
-      line-height: 1.8;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .primary-btn,
-    .ghost-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 46px;
-      padding: 0 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .primary-btn {
-      background: linear-gradient(135deg, var(--green), #315d4d);
-      color: #eef7e7;
-      box-shadow: 0 14px 28px rgba(33,78,61,0.2);
-    }
-
-    .ghost-btn {
-      background: rgba(255,255,255,0.4);
-      border: 1px solid var(--line);
-      color: var(--ink);
-    }
-
-    .primary-btn:hover,
-    .ghost-btn:hover,
-    .primary-btn:focus-visible,
-    .ghost-btn:focus-visible {
-      transform: translateY(-1px);
-    }
-
-    .meta-row {
-      list-style: none;
-      padding: 0;
-      margin: 26px 0 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
-    }
-
-    .meta-row li {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.5);
-      border: 1px solid rgba(31,38,31,0.06);
-      border-radius: 999px;
-      padding: 8px 10px;
-    }
-
-    .hero-panel {
-      position: relative;
-    }
-
-    .panel-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(241,239,230,0.8) 100%);
-      border: 1px solid rgba(31,38,31,0.06);
-      border-radius: var(--radius);
-      padding: 22px 18px 18px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel-card::before {
-      content: "";
-      position: absolute;
-      inset: 12px auto auto 12px;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(207,229,192,0.85), transparent 70%);
-      filter: blur(6px);
-    }
-
-    .panel-label {
-      margin: 0 0 10px;
-      color: var(--muted);
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
-    }
-
-    .panel-card h3 {
-      margin: 0;
-      font-size: clamp(1.4rem, 2vw, 2rem);
-      line-height: 1.2;
-      position: relative;
-      z-index: 1;
-    }
-
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .mini-stat {
-      background: rgba(255,255,255,0.42);
-      border: 1px solid rgba(31,38,31,0.07);
-      border-radius: 16px;
-      padding: 12px 12px 10px;
-    }
-
-    .mini-stat strong {
-      display: block;
-      font-size: 1.5rem;
-      letter-spacing: -0.06em;
-      margin-bottom: 5px;
-    }
-
-    .mini-stat span {
-      color: var(--muted);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      margin-top: 4px;
-      padding-bottom: 24px;
-    }
-
-    .stat-card {
-      background: rgba(255,255,255,0.4);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px 18px 16px;
-      box-shadow: 0 10px 18px rgba(18, 24, 16, 0.03);
-    }
-
-    .stat-label {
-      display: block;
-      color: var(--muted);
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .stat-card strong {
-      display: block;
-      font-size: clamp(1.7rem, 2vw, 2.5rem);
-      letter-spacing: -0.07em;
-      margin-bottom: 2px;
-    }
-
-    .stat-card span {
-      color: var(--ink-soft);
-      font-size: 0.82rem;
-    }
-
-    .directory {
-      border-top: 1px solid rgba(31,38,31,0.12);
-      padding-top: 22px;
-      margin-top: 18px;
-    }
-
-    .toolbar {
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 12px 0 18px;
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    /* 工具栏 */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
     .filter {
-      appearance: none;
-      border: 1px solid transparent;
-      background: transparent;
-      padding: 9px 12px;
-      border-radius: 999px;
-      cursor: pointer;
-      color: var(--ink-soft);
-      font-size: 0.74rem;
-      letter-spacing: 0.04em;
-      transition: all 0.2s ease;
+      border: 1px solid var(--border); background: var(--surface); padding: 8px 15px;
+      border-radius: 999px; color: var(--text-soft); font-size: 0.8rem; letter-spacing: 0.03em; transition: all 0.2s ease;
     }
-
-    .filter:hover {
-      color: var(--ink);
-      border-color: rgba(33,78,61,0.12);
-      background: rgba(255,255,255,0.4);
-    }
-
-    .filter[aria-pressed="true"] {
-      border-color: rgba(33,78,61,0.18);
-      background: rgba(221,233,223,0.85);
-      color: var(--green);
-      font-weight: 700;
-    }
-
+    .filter:hover { color: var(--text); border-color: var(--border-strong); }
+    .filter[aria-pressed="true"] { border-color: transparent; background: var(--grad); color: #0a0b0f; font-weight: 600; }
     .search {
-      width: min(260px, 100%);
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.5);
-      padding: 0 12px 0 14px;
-      color: var(--muted);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+      display: flex; align-items: center; gap: 8px; min-width: 230px; min-height: 42px; padding: 0 14px;
+      border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); transition: border-color 0.2s ease;
     }
+    .search:focus-within { border-color: var(--border-strong); }
+    .search svg { width: 16px; height: 16px; stroke: currentColor; flex: none; }
+    .search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 0.85rem; }
+    .search input::placeholder { color: var(--muted); }
 
-    .search svg {
-      width: 16px;
-      height: 16px;
-      stroke: currentColor;
-      flex: none;
+    /* 作品网格 —— 主角 */
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .card {
+      position: relative; display: flex; flex-direction: column; min-height: 210px;
+      padding: 22px 20px 18px; border-radius: var(--radius); background: var(--surface);
+      border: 1px solid var(--border); overflow: hidden;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
     }
+    .card::before { content: ""; position: absolute; inset: 0; background: var(--grad-soft); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+    .card:hover { transform: translateY(-4px); border-color: var(--border-strong); background: var(--surface-hover); box-shadow: var(--shadow); }
+    .card:hover::before { opacity: 1; }
+    .card > * { position: relative; z-index: 1; }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .card-icon { width: 40px; height: 40px; border-radius: 12px 12px 12px 4px; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--border); color: var(--icon-color, var(--accent)); }
+    .card-icon svg { width: 19px; height: 19px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+    .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--pending); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pending) 22%, transparent); }
+    .status.online { color: var(--online); }
+    .status.online::before { background: var(--online); box-shadow: 0 0 0 3px color-mix(in srgb, var(--online) 22%, transparent); }
+    .card h3 { margin: 18px 0 8px; font-family: var(--font-display); font-size: 1.12rem; letter-spacing: -0.01em; font-weight: 700; line-height: 1.3; }
+    .card h3 a { transition: color 0.18s ease; }
+    .card h3 a:hover { color: var(--accent); }
+    .card p { margin: 0; color: var(--text-soft); font-size: 0.84rem; line-height: 1.7; flex: 1; }
+    .card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 18px; }
+    .tag { color: var(--muted); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .card-go { color: var(--muted); display: inline-flex; transition: transform 0.2s ease, color 0.2s ease; }
+    .card-go svg { width: 16px; height: 16px; }
+    .card:hover .card-go { color: var(--accent); transform: translate(2px, -2px); }
+    .soon { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .empty { grid-column: 1 / -1; padding: 44px 20px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius); }
 
-    .search input {
-      width: 100%;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--ink);
-      font-size: 0.8rem;
-    }
+    /* 关于 + 联系 */
+    .about { display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 34px; align-items: center; }
+    .about h2 { margin: 0 0 14px; font-family: var(--font-display); font-size: clamp(1.5rem, 2.6vw, 2.1rem); letter-spacing: -0.02em; line-height: 1.2; }
+    .about p { margin: 0 0 13px; color: var(--text-soft); line-height: 1.85; font-size: 0.97rem; }
+    .pills { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 6px; }
+    .pills span { padding: 7px 13px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--text-soft); font-size: 0.75rem; letter-spacing: 0.03em; transition: all 0.2s ease; }
+    .pills span:hover { color: var(--text); border-color: var(--border-strong); transform: translateY(-2px); }
+    .contact-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .contact-card h3 { margin: 0 0 16px; font-family: var(--font-display); font-size: 1.1rem; }
+    .contact-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--border); }
+    .contact-row:first-of-type { border-top: 0; }
+    .contact-row .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--border); color: var(--accent); flex: none; }
+    .contact-row .ic svg { width: 17px; height: 17px; }
+    .contact-row .meta { display: flex; flex-direction: column; line-height: 1.3; }
+    .contact-row .meta small { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .contact-row .meta a, .contact-row .meta span { color: var(--text); font-size: 0.88rem; font-weight: 500; }
+    .contact-row .meta a:hover { color: var(--accent); }
 
-    .search input::placeholder {
-      color: #9aa19a;
-    }
+    /* 页脚 */
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px 0 44px; margin-top: 30px; border-top: 1px solid var(--border); color: var(--muted); font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; }
+    footer a { color: var(--text-soft); transition: color 0.2s ease; }
+    footer a:hover { color: var(--accent); }
 
-    .section-heading {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 0 16px;
-      border-bottom: 1px solid rgba(31,38,31,0.12);
-    }
+    /* 滚动揭示 */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
 
-    .section-heading h2 {
-      margin: 0;
-      font-size: 0.84rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-    }
-
-    .count {
-      color: var(--muted);
-      font-size: 0.7rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .site-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
-      border-left: 1px solid rgba(31,38,31,0.08);
-      margin-top: 0;
-    }
-
-    .site-card {
-      position: relative;
-      min-height: 214px;
-      padding: 20px 18px 18px;
-      background: rgba(255,255,255,0.18);
-      border-right: 1px solid rgba(31,38,31,0.08);
-      border-bottom: 1px solid rgba(31,38,31,0.08);
-      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-      animation: appear 0.4s ease both;
-    }
-
-    .site-card:hover {
-      background: rgba(255,255,255,0.42);
-      box-shadow: inset 0 0 0 1px rgba(31,38,31,0.04);
-      transform: translateY(-2px);
-    }
-
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .site-icon {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px 12px 12px 4px;
-      background: var(--icon-bg, #e7efe2);
-      color: var(--icon-color, var(--green));
-      box-shadow: inset 0 0 0 1px rgba(31,38,31,0.04);
-    }
-
-    .site-icon svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.63rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-    }
-
-    .status::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #70a977;
-      display: inline-block;
-      box-shadow: 0 0 0 3px rgba(112,169,119,0.15);
-    }
-
-    .status.pending {
-      color: #7b7c63;
-    }
-
-    .status.pending::before {
-      background: #d0b368;
-      box-shadow: 0 0 0 3px rgba(208,179,104,0.14);
-    }
-
-    .site-card h3 {
-      margin: 18px 0 8px;
-      font-size: 1.08rem;
-      line-height: 1.4;
-      letter-spacing: -0.03em;
-      font-weight: 800;
-    }
-
-    .site-card h3 a {
-      text-decoration-thickness: 1px;
-      text-underline-offset: 4px;
-      text-decoration-color: transparent;
-      transition: color 0.18s ease, text-decoration-color 0.18s ease;
-    }
-
-    .site-card h3 a:hover,
-    .site-card h3 a:focus-visible {
-      color: var(--green);
-      text-decoration-color: currentColor;
-    }
-
-    .site-card p {
-      margin: 0;
-      max-width: 280px;
-      color: var(--ink-soft);
-      font-size: 0.74rem;
-      line-height: 1.7;
-    }
-
-    .card-bottom {
-      position: absolute;
-      left: 18px;
-      right: 18px;
-      bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .category {
-      color: var(--muted);
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .card-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--green);
-      font-size: 0.66rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .card-link svg {
-      width: 13px;
-      height: 13px;
-    }
-
-    .card-link.disabled {
-      color: #a2a8a0;
-      pointer-events: none;
-    }
-
-    .empty {
-      grid-column: 1 / -1;
-      padding: 34px 20px 18px;
-      color: var(--muted);
-      font-size: 0.92rem;
-      text-align: center;
-    }
-
-    .about-panel {
-      display: grid;
-      grid-template-columns: 1.25fr 0.8fr;
-      gap: 20px;
-      padding: 26px 0 50px;
-      margin-top: 24px;
-      border-top: 1px solid rgba(31,38,31,0.12);
-    }
-
-    .about-panel h2 {
-      margin: 0 0 12px;
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      line-height: 1.1;
-      letter-spacing: -0.05em;
-    }
-
-    .about-panel p {
-      margin: 0;
-      color: var(--ink-soft);
-      line-height: 1.9;
-      font-size: 0.97rem;
-    }
-
-    .about-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-content: flex-start;
-      background: rgba(255,255,255,0.34);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 18px;
-      min-height: 180px;
-    }
-
-    .about-pills span {
-      display: inline-flex;
-      align-items: center;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(33,78,61,0.06);
-      color: var(--green);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 0 0 40px;
-      border-top: 1px solid rgba(31,38,31,0.1);
-      color: var(--muted);
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    footer a {
-      color: var(--green);
-    }
-
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    /* 响应式 */
     @media (max-width: 920px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .site-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .about-panel {
-        grid-template-columns: 1fr;
-      }
+      .hero { grid-template-columns: 1fr; gap: 24px; padding: 56px 0 36px; }
+      .hero-aside { padding: 0; border-left: 0; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .about { grid-template-columns: 1fr; }
     }
-
-    @media (max-width: 760px) {
-      .shell {
-        width: min(100% - 28px, 920px);
-      }
-
-      .topbar {
-        height: auto;
-        padding: 12px 0;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .nav {
-        width: 100%;
-        justify-content: flex-start;
-        overflow-x: auto;
-      }
-
-      .toolbar {
-        align-items: stretch;
-        flex-direction: column-reverse;
-        padding-bottom: 10px;
-      }
-
-      .search {
-        width: 100%;
-      }
-
-      .site-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      footer {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    @media (max-width: 640px) {
+      .shell { width: calc(100% - 28px); }
+      .topbar { height: auto; padding: 12px 0; flex-wrap: wrap; gap: 12px; }
+      .nav-links { gap: 16px; }
+      .hero { padding: 44px 0 28px; }
+      .grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search { width: 100%; }
+      footer { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
-
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
+      *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
+  <div class="progress" id="progress"></div>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
   <header class="shell topbar">
-    <a class="wordmark" href="#home" aria-label="Yufeng 首页"><span class="mark">Y</span><span>YUFENG</span></a>
+    <a class="wordmark" href="#home" aria-label="御风 首页"><span class="mark">Y</span><span>YUFENG</span></a>
     <nav class="nav" aria-label="主导航">
-      <a href="#home">首页</a>
-      <a href="#directory">目录</a>
-      <a href="#about">关于</a>
+      <div class="nav-links">
+        <a href="#home">首页</a>
+        <a href="#works">作品</a>
+        <a href="#about">关于</a>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换主题">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"></path></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path></svg>
+      </button>
     </nav>
   </header>
 
   <main id="home" class="shell">
-    <section class="hero" aria-labelledby="page-title">
+    <!-- HERO：克制 -->
+    <section class="hero" aria-labelledby="hero-title">
       <div>
-        <p class="eyebrow">Personal Tool Index / 个人工具索引</p>
-        <h1 id="page-title">我在做一些小工具，<span>也在慢慢构建自己的数字生活。</span></h1>
-        <p class="lead">这里是我的个人站点入口，收录我做过的工具、作品和正在路上的灵感。希望每一项都像一个真实能用的小产品一样，清晰、可用、值得一试。</p>
-        <div class="hero-actions">
-          <a class="primary-btn" href="#directory">浏览目录</a>
-          <a class="ghost-btn" href="#about">关于我</a>
-        </div>
-        <ul class="meta-row" aria-label="站点特性">
-          <li>⚡ 轻量静态部署</li>
-          <li>🧩 多分类导航</li>
-          <li>🌐 Cloudflare Pages</li>
-        </ul>
+        <p class="eyebrow">个人作品集 · PORTFOLIO</p>
+        <h1 id="hero-title"> ⌈ <span class="accent"> 御风</span> ⌋ 的空间</h1>
+        <p class="lead">这里收集了我做过的工具、作品，以及一些想慢慢搭建的小站。选一个，去看看。</p>
       </div>
-
-      <div class="hero-panel" aria-label="当前动态">
-        <div class="panel-card">
-          <p class="panel-label">CURRENTLY BUILDING</p>
-          <h3>Small tools, useful ideas, and a calmer digital corner.</h3>
-          <div class="mini-grid">
-            <div class="mini-stat">
-              <strong id="count-tools">0</strong>
-              <span>工具</span>
-            </div>
-            <div class="mini-stat">
-              <strong id="count-works">0</strong>
-              <span>作品</span>
-            </div>
-            <div class="mini-stat">
-              <strong id="count-about">0</strong>
-              <span>关于</span>
-            </div>
-            <div class="mini-stat">
-              <strong>∞</strong>
-              <span>持续更新</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <aside class="hero-aside">
+        <p class="aside-label">CURRENTLY</p>
+        <p class="aside-value">正在打磨数字生活的边角</p>
+        <p class="aside-sub">工具 · 作品 · 关于 · 持续更新</p>
+      </aside>
     </section>
 
-    <section class="stats" aria-label="统计信息">
-      <article class="stat-card">
-        <span class="stat-label">状态</span>
-        <strong>在线</strong>
-        <span>持续迭代与维护</span>
-      </article>
-      <article class="stat-card">
-        <span class="stat-label">方向</span>
-        <strong>工具化</strong>
-        <span>从生活细节到产品化思维</span>
-      </article>
-      <article class="stat-card">
-        <span class="stat-label">部署</span>
-        <strong>静态站</strong>
-        <span>无依赖、低成本、易扩展</span>
-      </article>
-    </section>
+    <!-- WORKS：主角 -->
+    <section class="section" id="works" aria-labelledby="works-title">
+      <div class="section-head reveal">
+        <h2 id="works-title">站点与项目</h2>
+        <span class="count" id="site-count">00 SITES</span>
+      </div>
 
-    <section class="directory" id="directory" aria-label="站点目录">
-      <div class="toolbar">
+      <div class="toolbar reveal">
         <nav class="filters" aria-label="按类别筛选">
           <button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button>
           <button class="filter" type="button" data-filter="工具" aria-pressed="false">工具</button>
           <button class="filter" type="button" data-filter="作品" aria-pressed="false">作品</button>
           <button class="filter" type="button" data-filter="关于" aria-pressed="false">关于</button>
         </nav>
-
         <label class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg>
-          <input id="search-input" type="search" placeholder="搜索站点..." aria-label="搜索站点">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg>
+          <input id="search-input" type="search" placeholder="搜索站点、关键词..." aria-label="搜索作品">
         </label>
       </div>
 
-      <div class="section-heading">
-        <h2>站点与项目</h2>
-        <span class="count" id="site-count">00 SITES</span>
-      </div>
-
-      <div class="site-grid" id="site-grid">
-        <article class="site-card" data-category="工具" data-search="多平台配图裁剪 图片裁剪 小红书 公众号 抖音 封面 社交媒体">
-          <div class="card-top">
-            <span class="site-icon" style="--icon-bg:#e7efe3;--icon-color:#2f5d49" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2"></rect><path d="M8 9h8M8 13h5"></path></svg>
-            </span>
-            <span class="status online">在线</span>
-          </div>
-          <h3><a href="https://img-cropper-1bm.pages.dev/" target="_blank" rel="noopener noreferrer">多平台配图裁剪</a></h3>
-          <p>公众号、小程序、小红书与抖音封面配图裁剪工具。</p>
-          <div class="card-bottom"><span class="category">工具 / IMAGE</span><span class="card-link">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></div>
-        </article>
-
-        <article class="site-card" data-category="关于" data-search="个人简历 简历 履历 关于我 profile cv">
-          <div class="card-top">
-            <span class="site-icon" style="--icon-bg:#f7ead8;--icon-color:#a5653c" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="16" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg>
-            </span>
-            <span class="status pending">待添加链接</span>
-          </div>
-          <h3>个人简历</h3>
-          <p>经历、技能与正在关注的事情，慢慢整理成一页。</p>
-          <div class="card-bottom"><span class="category">关于 / PROFILE</span><span class="card-link disabled">Soon</span></div>
-        </article>
-
-        <article class="site-card" data-category="作品" data-search="天文 星空 宇宙 观测 astronomy astro blog">
-          <div class="card-top">
-            <span class="site-icon" style="--icon-bg:#e6ebf1;--icon-color:#495B82" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="7"></circle><path d="M12 2v4M12 18v4M4 12h4M16 12h4M5.5 5.5l2.8 2.8M15.7 15.7l2.8 2.8M18.5 5.5l-2.8 2.8M8.3 15.7l-2.8 2.8"></path></svg>
-            </span>
-            <span class="status online">在线</span>
-          </div>
-          <h3><a href="https://astro-blog-eqt.pages.dev/" target="_blank" rel="noopener noreferrer">星野笔记</a></h3>
-          <p>关于夜空、宇宙，以及对宇宙的一点好奇。</p>
-          <div class="card-bottom"><span class="category">作品 / SPACE</span><span class="card-link">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span></div>
-        </article>
-
-        <article class="site-card" data-category="工具" data-search="账单 分类 记账 财务 money budget houses 日常消费">
-          <div class="card-top">
-            <span class="site-icon" style="--icon-bg:#f5e9e2;--icon-color:#af6d4f" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="15" rx="2"></rect><path d="M7 9h10M7 13h6M7 17h8"></path></svg>
-            </span>
-            <span class="status pending">待添加链接</span>
-          </div>
-          <h3>账单分类</h3>
-          <p>把日常账单理清楚，让每一笔花费都看得见。</p>
-          <div class="card-bottom"><span class="category">工具 / FINANCE</span><span class="card-link disabled">Soon</span></div>
-        </article>
-
-        <article class="site-card" data-category="作品" data-search="博客 文章 随笔 写作 notes personal writing ideas">
-          <div class="card-top">
-            <span class="site-icon" style="--icon-bg:#e2efe9;--icon-color:#3f7669" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4.5h9.5L19 9v10.5H5z"></path><path d="M14.5 4.5V9H19"></path><path d="M8 13h8M8 16h8"></path></svg>
-            </span>
-            <span class="status pending">待添加链接</span>
-          </div>
-          <h3>一些文字</h3>
-          <p>不定期写下来的想法、记录和小小的发现。</p>
-          <div class="card-bottom"><span class="category">作品 / NOTES</span><span class="card-link disabled">Soon</span></div>
-        </article>
-
-        <article class="site-card" data-category="关于" data-search="更多 项目 联系 联系方式 more contact about me">
-          <div class="card-top">
-            <span class="site-icon" style="--icon-bg:#f2efd9;--icon-color:#8c7b46" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 5v14M5 12h14"></path></svg>
-            </span>
-            <span class="status pending">待添加链接</span>
-          </div>
-          <h3>更多，正在路上</h3>
-          <p>新的小项目会陆续放在这里，保持好奇，继续折腾。</p>
-          <div class="card-bottom"><span class="category">更多 / IN PROGRESS</span><span class="card-link disabled">Soon</span></div>
-        </article>
-      </div>
+      <div class="grid" id="site-grid"><!-- 卡片由脚本渲染 --></div>
     </section>
 
-    <section class="about-panel" id="about" aria-labelledby="about-title">
-      <div>
-        <p class="eyebrow">About / 关于</p>
-        <h2 id="about-title">我是一个偏好把细碎问题做成「真正能用的工具」的人。</h2>
-        <p>我喜欢把生活中的小需求，慢慢整理成页面、工具和产品。这个站点，就是对这些小东西的集中展示：工具、作品、灵感与长期项目的入口，也希望它能随着我不断迭代越来越成熟。</p>
+    <!-- ABOUT -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="section-head reveal">
+        <h2 id="about-title">关于</h2>
       </div>
-      <div class="about-pills" aria-label="个人标签">
-        <span>网页工具</span>
-        <span>项目展示</span>
-        <span>生活记录</span>
-        <span>静态站点</span>
-        <span>界面设计</span>
-        <span>产品思维</span>
-        <span>持续迭代</span>
+      <div class="about reveal">
+        <div>
+          <h2>偏好把细碎问题，做成「真正能用的工具」。</h2>
+          <p>我喜欢把生活中的小需求，慢慢整理成页面、工具和产品。这个站点就是这些小东西的集中展示：工具、作品、灵感与长期项目的入口，也希望它能随我不断迭代，越来越成熟。</p>
+          <p>技术栈以静态前端为主，配合少量后端能力；重视「简单可维护、低成本部署、方便持续扩展」。</p>
+          <div class="pills" aria-label="个人标签">
+            <span>网页工具</span><span>项目展示</span><span>生活记录</span>
+            <span>静态站点</span><span>界面设计</span><span>产品思维</span><span>持续迭代</span>
+          </div>
+        </div>
+        <div class="contact-card">
+          <h3>联系方式</h3>
+          <div class="contact-row">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg></span>
+            <span class="meta"><small>Email</small><a href="mailto:994327432@qq.com">994327432@qq.com</a></span>
+          </div>
+          <div class="contact-row">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 19c-4 1.5-4-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6 0C6.3 2.5 5.3 2.8 5.3 2.8a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 3.9 9.2c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"></path></svg></span>
+            <span class="meta"><small>GitHub</small><a href="https://github.com/yufengwolf" target="_blank" rel="noopener noreferrer">yufengwolf</a></span>
+          </div>
+          <div class="contact-row">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v12H7l-3 3z"></path><path d="M8 9h8M8 13h5"></path></svg></span>
+            <span class="meta"><small>微信</small><span>yufeng_99432</span></span>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
   <footer class="shell">
-    <span>© <span id="year"></span> YUFENG · MADE WITH CURIOSITY</span>
+    <span>© <span id="year"></span> 御风 YUFENG · MADE WITH CURIOSITY</span>
     <a href="#home">回到顶部 ↑</a>
   </footer>
 
   <script>
-    const cards = [...document.querySelectorAll('.site-card')];
+    /* =========================================================
+       作品数据 —— 想新增一个作品，只需往下面这个数组加一条对象。
+       字段：title 标题 | category 分类(工具/作品/关于)
+            status 'online' 在线 / 'pending' 待上线
+            url 链接(留空则不跳转) | desc 简介
+            tags 搜索关键词 | icon 图标SVG | color 图标颜色
+       ========================================================= */
+    const PROJECTS = [
+      { title: "多平台配图裁剪", category: "工具", status: "online", url: "https://img-cropper-1bm.pages.dev/",
+        desc: "公众号、小程序、小红书与抖音封面配图一键裁剪工具。",
+        tags: "配图 裁剪 封面 社交媒体 小红书 公众号", color: "#7C9CFF",
+        icon: '<rect x="3.5" y="5" width="17" height="14" rx="2"></rect><path d="M8 9h8M8 13h5"></path>' },
+      { title: "个人简历", category: "关于", status: "pending", url: "",
+        desc: "经历、技能与正在关注的事情，慢慢整理成一页。",
+        tags: "简历 履历 关于我 profile cv", color: "#F0B36B",
+        icon: '<rect x="5" y="4" width="14" height="16" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path>' },
+      { title: "星野笔记", category: "作品", status: "online", url: "https://astro-blog-eqt.pages.dev/",
+        desc: "关于夜空、宇宙，以及对宇宙的一点好奇。",
+        tags: "天文 星空 宇宙 观测 astronomy 博客", color: "#8FB4FF",
+        icon: '<circle cx="12" cy="12" r="7"></circle><path d="M12 2v4M12 18v4M4 12h4M16 12h4M5.5 5.5l2.8 2.8M15.7 15.7l2.8 2.8M18.5 5.5l-2.8 2.8M8.3 15.7l-2.8 2.8"></path>' },
+      { title: "账单分类", category: "工具", status: "pending", url: "",
+        desc: "把日常账单理清楚，让每一笔花费都看得见。",
+        tags: "账单 分类 记账 财务 日常消费", color: "#F09A7A",
+        icon: '<rect x="3.5" y="5" width="17" height="15" rx="2"></rect><path d="M7 9h10M7 13h6M7 17h8"></path>' },
+      { title: "一些文字", category: "作品", status: "pending", url: "",
+        desc: "不定期写下来的想法、记录和小小的发现。",
+        tags: "博客 文章 随笔 写作 notes 文字", color: "#5FCFB0",
+        icon: '<path d="M5 4.5h9.5L19 9v10.5H5z"></path><path d="M14.5 4.5V9H19"></path><path d="M8 13h8M8 16h8"></path>' },
+      { title: "更多，正在路上", category: "关于", status: "pending", url: "",
+        desc: "新的小项目会陆续放在这里，保持好奇，继续折腾。",
+        tags: "更多 项目 联系 关于 me", color: "#D8C56B",
+        icon: '<path d="M12 5v14M5 12h14"></path>' }
+    ];
+
+    const SVG_NS = 'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
+
+    function cardHTML(p) {
+      const online = p.status === "online";
+      const statusHTML = online ? '<span class="status online">在线</span>' : '<span class="status">待上线</span>';
+      const tail = p.url
+        ? '<span class="card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></span>'
+        : '<span class="soon">Soon</span>';
+      const inner = `
+        <div class="card-top">
+          <span class="card-icon" style="--icon-color:${p.color}"><svg ${SVG_NS}>${p.icon}</svg></span>
+          ${statusHTML}
+        </div>
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+        <div class="card-bottom"><span class="tag">${p.category}</span>${tail}</div>`;
+      // 有链接时整张卡片可点击；无链接则为普通卡片
+      if (p.url) {
+        return `<a class="card reveal" href="${p.url}" target="_blank" rel="noopener noreferrer" aria-label="${p.title}" data-category="${p.category}" data-search="${(p.title + ' ' + p.tags).toLowerCase()}">${inner}</a>`;
+      }
+      return `<article class="card reveal" data-category="${p.category}" data-search="${(p.title + ' ' + p.tags).toLowerCase()}">${inner}</article>`;
+    }
+
+    const grid = document.querySelector('#site-grid');
     const filters = [...document.querySelectorAll('.filter')];
     const searchInput = document.querySelector('#search-input');
-    const count = document.querySelector('#site-count');
-    const totalTools = document.querySelector('#count-tools');
-    const totalWorks = document.querySelector('#count-works');
-    const totalAbout = document.querySelector('#count-about');
+    const countEl = document.querySelector('#site-count');
     let activeFilter = 'all';
 
-    function updateCounts() {
-      const toolCount = cards.filter((card) => card.dataset.category === '工具').length;
-      const workCount = cards.filter((card) => card.dataset.category === '作品').length;
-      const aboutCount = cards.filter((card) => card.dataset.category === '关于').length;
-      totalTools.textContent = toolCount;
-      totalWorks.textContent = workCount;
-      totalAbout.textContent = aboutCount;
+    function render() {
+      grid.innerHTML = PROJECTS.map(cardHTML).join('');
+      bindReveal(grid.querySelectorAll('.card'));
+      updateCards();
     }
 
     function updateCards() {
-      const query = searchInput.value.trim().toLocaleLowerCase();
+      const query = (searchInput.value || '').trim().toLowerCase();
+      const cards = [...grid.querySelectorAll('.card')];
       let visible = 0;
-
-      cards.forEach((card, index) => {
-        const matchesCategory = activeFilter === 'all' || card.dataset.category === activeFilter;
-        const matchesSearch = `${card.dataset.search} ${card.textContent}`.toLocaleLowerCase().includes(query);
-        const show = matchesCategory && matchesSearch;
-        card.hidden = !show;
-        if (show) {
-          visible += 1;
-          card.style.animationDelay = `${Math.min(index, 8) * 40}ms`;
-        }
+      cards.forEach((card) => {
+        const matchCat = activeFilter === 'all' || card.dataset.category === activeFilter;
+        const matchSearch = !query || card.dataset.search.includes(query);
+        const show = matchCat && matchSearch;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
       });
-
-      count.textContent = `${String(visible).padStart(2, '0')} SITES`;
-
-      let empty = document.querySelector('.empty');
+      countEl.textContent = `${String(visible).padStart(2, '0')} SITES`;
+      let empty = grid.querySelector('.empty');
       if (visible === 0 && !empty) {
-        empty = document.createElement('p');
+        empty = document.createElement('div');
         empty.className = 'empty';
-        empty.textContent = '没有找到匹配的站点。';
-        document.querySelector('#site-grid').append(empty);
-      } else if (visible > 0 && empty) {
-        empty.remove();
-      }
+        empty.textContent = '没有找到匹配的作品。';
+        grid.append(empty);
+      } else if (visible > 0 && empty) { empty.remove(); }
     }
 
-    filters.forEach((button) => {
-      button.addEventListener('click', () => {
-        activeFilter = button.dataset.filter;
-        filters.forEach((filter) => filter.setAttribute('aria-pressed', String(filter === button)));
+    filters.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        filters.forEach((f) => f.setAttribute('aria-pressed', String(f === btn)));
         updateCards();
       });
     });
-
     searchInput.addEventListener('input', updateCards);
+
+    /* 主题切换（记忆到 localStorage） */
+    const themeToggle = document.querySelector('#theme-toggle');
+    const root = document.documentElement;
+    const saved = localStorage.getItem('yf-theme');
+    if (saved) root.setAttribute('data-theme', saved);
+    themeToggle.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('yf-theme', next);
+    });
+
+    /* 滚动进度条 */
+    const progress = document.querySelector('#progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* 滚动揭示 */
+    let revealObserver;
+    function bindReveal(els) {
+      if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+      if (!revealObserver) {
+        revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); revealObserver.unobserve(en.target); } });
+        }, { threshold: 0.12 });
+      }
+      els.forEach((e) => revealObserver.observe(e));
+    }
+
     document.querySelector('#year').textContent = new Date().getFullYear();
-    updateCounts();
-    updateCards();
+    render();
+    bindReveal(document.querySelectorAll('.reveal'));
   </script>
 </body>
 </html>

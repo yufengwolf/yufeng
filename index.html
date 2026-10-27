@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <meta name="description" content="Yufeng 的个人站点与工具导航。">
+  <title>Yufeng · 个人站点</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f7f2;
+      --ink: #202821;
+      --muted: #788078;
+      --line: #e2e6dd;
+      --green: #245c43;
+      --lime: #d7ed78;
+      --orange: #e8895b;
+      --white: #fff;
+      font-family: "Trebuchet MS", "Microsoft YaHei UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background-color: var(--paper);
+      background-image: radial-gradient(#dce2d7 0.7px, transparent 0.7px);
+      background-size: 15px 15px;
+      color: var(--ink);
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1120px, calc(100% - 64px)); margin: 0 auto; }
+    .topbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+    .wordmark { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 800; }
+    .mark { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px 8px 8px 2px; background: var(--green); color: var(--lime); font-size: 14px; }
+    .top-note { color: var(--muted); font: 11px Consolas, monospace; letter-spacing: 0; }
+
+    .intro { padding: 76px 0 51px; display: grid; grid-template-columns: minmax(0, 1fr) 205px; align-items: end; gap: 36px; }
+    .eyebrow { margin: 0 0 17px; color: var(--green); font: 11px Consolas, monospace; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(42px, 6vw, 72px); line-height: 1.06; letter-spacing: 0; font-weight: 800; }
+    h1 span { color: var(--green); }
+    .intro-copy { max-width: 515px; margin: 18px 0 0; color: #687269; font-size: 15px; line-height: 1.8; }
+    .intro-aside { padding: 15px 0 3px 19px; border-left: 1px solid #cbd3c8; }
+    .aside-label { margin: 0 0 7px; color: var(--muted); font: 10px Consolas, monospace; text-transform: uppercase; }
+    .aside-value { margin: 0; font-size: 14px; font-weight: 700; }
+    .aside-sub { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+
+    .directory { border-top: 1px solid var(--line); }
+    .toolbar { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 7px; }
+    .filter { border: 1px solid transparent; background: transparent; padding: 8px 12px; border-radius: 3px; cursor: pointer; color: #687269; font-size: 12px; transition: background .18s, color .18s, border-color .18s; }
+    .filter:hover { color: var(--ink); }
+    .filter[aria-pressed="true"] { border-color: #d3ddce; background: #eaf0e4; color: var(--green); font-weight: 700; }
+    .search { width: 210px; height: 36px; border: 1px solid var(--line); border-radius: 3px; background: rgba(255,255,255,.55); display: flex; align-items: center; gap: 8px; padding: 0 10px; color: var(--muted); }
+    .search svg { width: 15px; height: 15px; flex: none; }
+    .search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; }
+    .search input::placeholder { color: #9aa198; }
+
+    .section-heading { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0 13px; border-bottom: 1px solid var(--line); }
+    .section-heading h2 { margin: 0; font-size: 12px; font-weight: 700; }
+    .count { color: var(--muted); font: 10px Consolas, monospace; }
+    .site-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-left: 1px solid var(--line); }
+    .site-card { position: relative; min-height: 190px; padding: 21px 20px 17px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transition: background .2s; animation: appear .45s both; }
+    .site-card:hover { background: rgba(255,255,255,.62); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; }
+    .site-icon { width: 33px; height: 33px; display: grid; place-items: center; background: var(--icon-bg, #e7ecdf); color: var(--icon-color, var(--green)); border-radius: 8px 8px 8px 2px; }
+    .site-icon svg { width: 17px; height: 17px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font: 9px Consolas, monospace; text-transform: uppercase; }
+    .status::before { width: 6px; height: 6px; content: ""; border-radius: 50%; background: #6ea47c; }
+    .status.pending { color: #898c7a; }
+    .status.pending::before { background: #c1b878; }
+    .site-card h3 { margin: 17px 0 6px; font-size: 16px; font-weight: 700; }
+    .site-card h3 a { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; transition: color .18s, text-decoration-color .18s; }
+    .site-card h3 a:hover, .site-card h3 a:focus-visible { color: var(--green); text-decoration-color: currentColor; }
+    .site-card p { margin: 0; max-width: 270px; color: #798078; font-size: 11px; line-height: 1.65; }
+    .card-bottom { position: absolute; right: 20px; bottom: 15px; left: 20px; display: flex; align-items: center; justify-content: space-between; }
+    .category { color: #8a928a; font: 9px Consolas, monospace; text-transform: uppercase; }
+    .card-link { display: inline-flex; align-items: center; gap: 5px; color: var(--green); font-size: 10px; font-weight: 700; }
+    .card-link svg { width: 13px; height: 13px; }
+    .card-link.disabled { color: #a4a99e; cursor: default; }
+    .empty { grid-column: 1 / -1; padding: 35px 20px; color: var(--muted); font-size: 13px; }
+
+    footer { display: flex; justify-content: space-between; align-items: center; padding: 25px 0 35px; color: #858d84; font: 10px Consolas, monospace; }
+    footer a { color: var(--green); }
+    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 36px, 560px); }
+      .topbar { height: 61px; }
+      .intro { padding: 53px 0 36px; grid-template-columns: 1fr; gap: 22px; }
+      h1 { font-size: clamp(43px, 12vw, 61px); }
+      .intro-copy { margin-top: 14px; font-size: 13px; }
+      .intro-aside { padding: 0 0 0 12px; }
+      .toolbar { align-items: stretch; flex-direction: column-reverse; gap: 12px; padding: 16px 0; }
+      .search { width: 100%; }
+      .filters { gap: 3px; }
+      .filter { padding: 7px 10px; }
+      .site-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .site-card { min-height: 185px; padding: 16px 13px 15px; }
+      .card-bottom { right: 13px; left: 13px; }
+      .site-card h3 { font-size: 14px; }
+      .site-card p { font-size: 10px; }
+    }
+
+    @media (max-width: 430px) {
+      .site-grid { grid-template-columns: 1fr; }
+      .site-card { min-height: 160px; padding: 17px 16px 15px; }
+      .card-bottom { right: 16px; left: 16px; }
+      .site-card h3 { margin-top: 13px; }
+      .top-note { font-size: 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="wordmark" href="#top" aria-label="Yufeng 首页"><span class="mark">Y</span><span>YUFENG</span></a>
+    <span class="top-note">A SMALL CORNER OF THE INTERNET</span>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">PERSONAL INDEX / 个人站点索引</p>
+        <h1 id="page-title">你好，我是<span> Yufeng.</span></h1>
+        <p class="intro-copy">这里收集了我做过的东西、正在维护的工具，以及一些想慢慢搭建的小站。选一个，去看看。</p>
+      </div>
+      <aside class="intro-aside">
+        <p class="aside-label">CURRENTLY BUILDING</p>
+        <p class="aside-value">数字生活的边角</p>
+        <p class="aside-sub">个人项目 · 持续更新</p>
+      </aside>
+    </section>
+
+    <section class="directory" aria-label="站点目录">
+      <div class="toolbar">
+        <nav class="filters" aria-label="按类别筛选">
+          <button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button>
+          <button class="filter" type="button" data-filter="工具" aria-pressed="false">工具</button>
+          <button class="filter" type="button" data-filter="作品" aria-pressed="false">作品</button>
+          <button class="filter" type="button" data-filter="关于" aria-pressed="false">关于</button>
+        </nav>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg>
+          <input id="search-input" type="search" placeholder="搜索站点..." aria-label="搜索站点">
+        </label>
+      </div>
+
+      <div class="section-heading">
+        <h2>站点与项目</h2>
+        <span class="count" id="site-count">00 SITES</span>
+      </div>
+      <div class="site-grid" id="site-grid">
+        <!-- 新增站点：复制一张 article，修改标题、简介、分类和搜索词；把 h3 标题写成 <h3><a href="https://你的站点.pages.dev/">站点名称</a></h3>，顶部状态只写“在线”。 -->
+        <article class="site-card" data-category="工具" data-search="多平台配图裁剪 图片裁剪 小红书 公众号 抖音">
+          <div class="card-top">
+            <span class="site-icon" style="--icon-bg:#e5eee1;--icon-color:#315f49" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="4.5" width="17" height="15" rx="2"></rect><circle cx="8.5" cy="9" r="1.5"></circle><path d="m20.5 15-5-5-9 9"></path></svg></span>
+            <span class="status online">在线</span>
+          </div>
+          <h3><a href="https://img-cropper-1bm.pages.dev/" target="_blank" rel="noopener noreferrer">多平台配图裁剪</a></h3>
+          <p>公众号、小程序、小红书与抖音封面配图裁剪工具。</p>
+          <div class="card-bottom"><span class="category">工具 / IMAGE</span></div>
+        </article>
+
+        <article class="site-card" data-category="关于" data-search="个人简历 简历 履历 关于我">
+          <div class="card-top">
+            <span class="site-icon" style="--icon-bg:#f5e9d8;--icon-color:#a5683f" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="3.5" width="14" height="17" rx="2"></rect><circle cx="12" cy="9" r="2.3"></circle><path d="M8.5 16c.7-1.6 2-2.4 3.5-2.4s2.8.8 3.5 2.4"></path></svg></span>
+            <span class="status pending">待添加链接</span>
+          </div>
+          <h3>个人简历</h3>
+          <p>经历、技能与正在关注的事情，慢慢整理成一页。</p>
+          <div class="card-bottom"><span class="category">关于 / PROFILE</span></div>
+        </article>
+
+        <article class="site-card" data-category="作品" data-search="天文 星空 宇宙 观测 astronomy">
+          <div class="card-top">
+            <span class="site-icon" style="--icon-bg:#e6e9f1;--icon-color:#4c587b" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"></circle><path d="M19 5c2.8 2.8 2.8 11.2 0 14s-11.2 2.8-14 0-2.8-11.2 0-14 11.2-2.8 14 0Z" transform="rotate(35 12 12)"></path><path d="m18.5 5.5.01 0"></path></svg></span>
+            <span class="status online">在线</span>
+          </div>
+          <h3><a href="https://astro-blog-eqt.pages.dev/" target="_blank" rel="noopener noreferrer">星野笔记</a></h3>
+          <p>关于夜空、宇宙，以及对宇宙的一点好奇。</p>
+          <div class="card-bottom"><span class="category">作品 / SPACE</span></div>
+        </article>
+
+        <article class="site-card" data-category="工具" data-search="账单 分类 记账 财务 money">
+          <div class="card-top">
+            <span class="site-icon" style="--icon-bg:#f4e8e2;--icon-color:#ae6447" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="14" rx="2"></rect><path d="M3.5 9h17M7 14h4"></path><circle cx="16.5" cy="14" r="1"></circle></svg></span>
+            <span class="status pending">待添加链接</span>
+          </div>
+          <h3>账单分类</h3>
+          <p>把日常账单理清楚，让每一笔花费都看得见。</p>
+          <div class="card-bottom"><span class="category">工具 / FINANCE</span></div>
+        </article>
+
+        <article class="site-card" data-category="作品" data-search="博客 文章 随笔 写作 notes">
+          <div class="card-top">
+            <span class="site-icon" style="--icon-bg:#e4efec;--icon-color:#397069" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4.5h14v15H5zM8 8h8M8 12h8M8 16h5"></path></svg></span>
+            <span class="status pending">待添加链接</span>
+          </div>
+          <h3>一些文字</h3>
+          <p>不定期写下来的想法、记录和小小的发现。</p>
+          <div class="card-bottom"><span class="category">作品 / NOTES</span></div>
+        </article>
+
+        <article class="site-card" data-category="关于" data-search="更多 项目 联系 联系方式 more">
+          <div class="card-top">
+            <span class="site-icon" style="--icon-bg:#f0eddb;--icon-color:#887b3a" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 5v14M5 12h14"></path></svg></span>
+            <span class="status pending">待添加链接</span>
+          </div>
+          <h3>更多，正在路上</h3>
+          <p>新的小项目会陆续放在这里，保持好奇，继续折腾。</p>
+          <div class="card-bottom"><span class="category">更多 / IN PROGRESS</span></div>
+        </article>
+      </div>
+    </section>
+
+    <footer><span>© <span id="year"></span> YUFENG · MADE WITH CURIOSITY</span><a href="#top">回到顶部 ↑</a></footer>
+  </main>
+
+  <script>
+    const cards = [...document.querySelectorAll('.site-card')];
+    const filters = [...document.querySelectorAll('.filter')];
+    const searchInput = document.querySelector('#search-input');
+    const count = document.querySelector('#site-count');
+    let activeFilter = 'all';
+
+    function updateCards() {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      let visible = 0;
+      cards.forEach((card, index) => {
+        const matchesCategory = activeFilter === 'all' || card.dataset.category === activeFilter;
+        const matchesSearch = `${card.dataset.search} ${card.textContent}`.toLocaleLowerCase().includes(query);
+        const show = matchesCategory && matchesSearch;
+        card.hidden = !show;
+        if (show) {
+          visible += 1;
+          card.style.animationDelay = `${Math.min(index, 5) * 45}ms`;
+        }
+      });
+      count.textContent = `${String(visible).padStart(2, '0')} SITES`;
+      let empty = document.querySelector('.empty');
+      if (visible === 0 && !empty) {
+        empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = '没有找到匹配的站点。';
+        document.querySelector('#site-grid').append(empty);
+      } else if (visible > 0 && empty) {
+        empty.remove();
+      }
+    }
+
+    filters.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeFilter = button.dataset.filter;
+        filters.forEach((filter) => filter.setAttribute('aria-pressed', String(filter === button)));
+        updateCards();
+      });
+    });
+    searchInput.addEventListener('input', updateCards);
+    document.querySelector('#year').textContent = new Date().getFullYear();
+    updateCards();
+  </script>
+</body>
+</html>

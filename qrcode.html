@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0b0f">
+  <meta name="description" content="二维码生成器 - 生成链接、文本和联系方式二维码，适合分享和展示。">
+  <title>二维码生成器 · 御风</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0b0f;
+      --bg-2: #0e1016;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-2: rgba(255, 255, 255, 0.06);
+      --surface-hover: rgba(255, 255, 255, 0.09);
+      --border: rgba(255, 255, 255, 0.09);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #ECECF1;
+      --text-soft: #A8ADB8;
+      --muted: #6E747F;
+      --grad: linear-gradient(120deg, #a78bfa 0%, #67e8f9 100%);
+      --grad-soft: linear-gradient(120deg, rgba(167,139,250,0.16), rgba(103,232,249,0.16));
+      --accent: #a78bfa;
+      --accent-2: #67e8f9;
+      --shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
+      --radius: 20px;
+      --shell: min(1140px, 90%);
+      --font-display: "Sora", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
+      --font-body: "Inter", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", sans-serif;
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --bg-2: #eef0f6;
+      --surface: rgba(255, 255, 255, 0.76);
+      --surface-2: rgba(255, 255, 255, 0.9);
+      --surface-hover: rgba(255, 255, 255, 0.96);
+      --border: rgba(15, 18, 30, 0.08);
+      --border-strong: rgba(15, 18, 30, 0.15);
+      --text: #14161d;
+      --text-soft: #464b57;
+      --muted: #80868f;
+      --grad: linear-gradient(120deg, #7c5cff 0%, #0ea5b7 100%);
+      --grad-soft: linear-gradient(120deg, rgba(124,92,255,0.12), rgba(14,165,183,0.12));
+      --accent: #7c5cff;
+      --accent-2: #0ea5b7;
+      --shadow: 0 22px 54px rgba(20, 25, 50, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .aurora::before, .aurora::after {
+      content: ""; position: absolute; width: 55vw; height: 55vw; border-radius: 50%;
+      filter: blur(90px); opacity: 0.85;
+    }
+    .aurora::before { top: -16vw; left: -8vw; background: radial-gradient(circle, rgba(167, 139, 250, 0.2), transparent 65%); }
+    .aurora::after { bottom: -20vw; right: -10vw; background: radial-gradient(circle, rgba(103, 232, 249, 0.12), transparent 65%); }
+
+    .shell { width: var(--shell); margin: 0 auto; position: relative; z-index: 1; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between; height: 70px;
+      border-bottom: 1px solid var(--border);
+      background: color-mix(in srgb, var(--bg) 72%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .wordmark {
+      display: inline-flex; align-items: center; gap: 11px;
+      font-family: var(--font-display); font-weight: 800; letter-spacing: 0.12em; font-size: 0.8rem;
+    }
+    .mark {
+      width: 30px; height: 30px; border-radius: 9px 9px 9px 3px;
+      background: var(--grad); color: #0a0b0f; display: grid; place-items: center; font-weight: 900;
+      box-shadow: 0 8px 20px rgba(124, 92, 255, 0.35);
+    }
+    .nav { display: flex; align-items: center; gap: 16px; }
+    .nav a { color: var(--text-soft); font-size: 0.82rem; letter-spacing: 0.04em; }
+    .nav a:hover { color: var(--text); }
+    .theme-toggle {
+      width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text-soft);
+    }
+    [data-theme="dark"] .theme-toggle .moon { display: none; }
+    [data-theme="light"] .theme-toggle .sun { display: none; }
+
+    main { padding: 48px 0 60px; }
+    .tool-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .tool-head {
+      display: flex; align-items: center; justify-content: space-between; padding: 22px 26px;
+      border-bottom: 1px solid var(--border);
+    }
+    .crumbs { color: var(--muted); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; }
+    .tool-head h1 {
+      margin: 0; font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.3rem);
+      letter-spacing: -0.03em;
+    }
+    .tool-body {
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 22px; padding: 24px;
+    }
+    .panel {
+      background: rgba(255,255,255,0.015); border: 1px solid var(--border); border-radius: 18px; padding: 20px;
+    }
+    .label {
+      display: block; margin-bottom: 10px; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    }
+    textarea {
+      width: 100%; min-height: 150px; resize: vertical; border: 1px solid var(--border); border-radius: 14px;
+      background: rgba(255,255,255,0.02); color: var(--text); padding: 14px 16px; outline: none;
+    }
+    textarea:focus, input:focus { border-color: var(--border-strong); }
+
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .quick-actions button {
+      border: 1px solid var(--border); background: var(--surface-2); color: var(--text-soft); border-radius: 999px;
+      padding: 8px 12px; transition: all 0.2s ease;
+    }
+    .quick-actions button:hover { color: var(--text); border-color: var(--border-strong); }
+
+    .settings {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px;
+    }
+    .settings .field { display: flex; flex-direction: column; gap: 10px; }
+    .settings label { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--text-soft); }
+    input[type="range"] { width: 100%; }
+    input[type="color"] {
+      width: 54px; height: 38px; border: 1px solid var(--border); background: transparent; border-radius: 10px; padding: 0;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .primary,
+    .ghost {
+      padding: 11px 16px; border-radius: 12px; border: 1px solid var(--border); transition: transform 0.2s ease;
+    }
+    .primary {
+      background: var(--grad); color: #0a0b0f; border: none; font-weight: 700;
+    }
+    .ghost { background: var(--surface-2); color: var(--text); }
+    .primary:hover, .ghost:hover { transform: translateY(-1px); }
+
+    .preview {
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 18px;
+      min-height: 340px;
+    }
+    .canvas-wrap {
+      width: min(100%, 280px); aspect-ratio: 1;
+      border-radius: 22px; background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border); display: grid; place-items: center;
+      padding: 20px;
+    }
+    canvas {
+      width: 100%; height: 100%; display: block; border-radius: 14px;
+      background: #fff; padding: 12px; box-shadow: 0 8px 26px rgba(0,0,0,0.12);
+    }
+    .status {
+      text-align: center; color: var(--text-soft); font-size: 0.85rem; line-height: 1.7; min-height: 46px;
+    }
+
+    footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px 0 44px;
+      color: var(--muted); border-top: 1px solid var(--border);
+      margin-top: 14px;
+    }
+
+    @media (max-width: 860px) {
+      .tool-body { grid-template-columns: 1fr; }
+      .preview { order: -1; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: calc(100% - 28px); }
+      .topbar { height: auto; padding: 12px 0; flex-wrap: wrap; gap: 12px; }
+      .tool-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .settings { grid-template-columns: 1fr; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <header class="shell topbar">
+    <a class="wordmark" href="index.html" aria-label="返回���页"><span class="mark">Y</span><span>YUFENG</span></a>
+    <nav class="nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换主题">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"></path></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section class="tool-card">
+      <div class="tool-head">
+        <div>
+          <div class="crumbs">工具 / QR TOOL</div>
+          <h1>二维码生成器</h1>
+        </div>
+      </div>
+
+      <div class="tool-body">
+        <div class="panel">
+          <label class="label" for="contentInput">内容</label>
+          <textarea id="contentInput" placeholder="输入链接、文本、微信号、手机号或联系信息...">https://yufengwolf.github.io/yufeng/</textarea>
+
+          <div class="quick-actions" aria-label="快速模板">
+            <button type="button" class="template-btn" data-template="https://example.com">链接</button>
+            <button type="button" class="template-btn" data-template="微信号：yufeng_99432">微信</button>
+            <button type="button" class="template-btn" data-template="电话：13888888888">电话</button>
+            <button type="button" class="template-btn" data-template="邮箱：994327432@qq.com">邮箱</button>
+          </div>
+
+          <div class="settings">
+            <div class="field">
+              <label for="sizeRange">尺寸 <span id="sizeValue">220</span></label>
+              <input id="sizeRange" type="range" min="120" max="420" step="10" value="220">
+            </div>
+            <div class="field">
+              <label>前景色 <input id="darkColor" type="color" value="#111827"></label>
+              <label>背景色 <input id="lightColor" type="color" value="#ffffff"></label>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="primary" id="generateBtn">生成二维码</button>
+            <button type="button" class="ghost" id="downloadBtn">下载 PNG</button>
+          </div>
+        </div>
+
+        <div class="panel preview">
+          <div class="canvas-wrap">
+            <canvas id="qrcodeCanvas" width="220" height="220" aria-label="二维码预览"></canvas>
+          </div>
+          <div class="status" id="statusText">输入内容后，点击“生成二维码”即可生成。</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <span>© <span id="year"></span> 御风 YUFENG · MADE WITH CURIOSITY</span>
+    <a href="index.html">返回主页</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script>
+    const contentInput = document.getElementById('contentInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+    const statusText = document.getElementById('statusText');
+    const sizeRange = document.getElementById('sizeRange');
+    const sizeValue = document.getElementById('sizeValue');
+    const darkColor = document.getElementById('darkColor');
+    const lightColor = document.getElementById('lightColor');
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem('yf-theme');
+    if (savedTheme) root.setAttribute('data-theme', savedTheme);
+    themeToggle.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('yf-theme', next);
+    });
+
+    sizeRange.addEventListener('input', () => {
+      sizeValue.textContent = sizeRange.value;
+    });
+
+    document.querySelectorAll('.template-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        contentInput.value = btn.dataset.template;
+        generateQr();
+      });
+    });
+
+    function generateQr() {
+      const value = contentInput.value.trim();
+      if (!value) {
+        statusText.textContent = '请输入内容后再生成二维码。';
+        return;
+      }
+
+      const size = Number(sizeRange.value);
+      const options = {
+        width: size,
+        margin: 2,
+        color: {
+          dark: darkColor.value,
+          light: lightColor.value
+        }
+      };
+
+      QRCode.toCanvas(qrcodeCanvas, value, options, (error) => {
+        if (error) {
+          statusText.textContent = '生成失败，请检查内容后重试。';
+          return;
+        }
+        statusText.textContent = '二维码已生成，可直接下载或复制内容。';
+      });
+    }
+
+    generateBtn.addEventListener('click', generateQr);
+    contentInput.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        generateQr();
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const dataUrl = qrcodeCanvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'qrcode.png';
+      link.href = dataUrl;
+      link.click();
+      statusText.textContent = '二维码已下载。';
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+    generateQr();
+  </script>
+</body>
+</html>
